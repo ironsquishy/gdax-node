@@ -18,6 +18,25 @@ suite('WebsocketClient', () => {
     });
   });
 
+  test('connects to specified server with v2', done => {
+    const server = testserver(port, () => {
+      const websocketClient = new Gdax.WebsocketClient(
+        ['BTC-USD'],
+        'ws://localhost:' + port,
+        null, 
+        {v2: true}
+      );
+      
+      websocketClient.connect();
+
+      websocketClient.on('open', () => {
+        server.close();
+        done();
+      });
+
+    });
+  });
+
   test('subscribes to the default product (BTC-USD) and default channel (full) if undefined', done => {
     const server = testserver(port, () => {
       new Gdax.WebsocketClient(null, 'ws://localhost:' + port);
