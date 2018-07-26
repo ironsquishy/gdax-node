@@ -7,11 +7,10 @@ let port = 56632;
 suite('WebsocketClient', () => {
   test('connects to specified server', done => {
     const server = testserver(port, () => {
-      const websocketClient = new Gdax.WebsocketClient(
-        ['BTC-EUR'],
-        'ws://localhost:' + port
-      );
-      websocketClient.on('open', () => {
+      new Gdax.WebsocketClient(['BTC-EUR'], 'ws://localhost:' + port);
+    });
+    server.on('connection', socket => {
+      socket.on('message', () => {
         server.close();
         done();
       });
@@ -288,9 +287,6 @@ suite('WebsocketClient', () => {
       client.once('error', err => {
         assert.equal(err.message, 'test error');
         assert.equal(err.reason, 'because error');
-
-        server.close();
-        done();
       });
     });
 
@@ -302,6 +298,10 @@ suite('WebsocketClient', () => {
           reason: 'because error',
         })
       );
+      socket.on('message', () => {
+        server.close();
+        done();
+      });
     });
   });
 });

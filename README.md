@@ -337,6 +337,7 @@ authedClient.cancelOrder(orderID, callback);
 * [`cancelOrders`](https://docs.gdax.com/#cancel-all)
 
 ```js
+// Cancels "open" orders
 authedClient.cancelOrders(callback);
 ```
 
@@ -344,7 +345,7 @@ authedClient.cancelOrders(callback);
 
 ```js
 // `cancelOrders` may require you to make the request multiple times until
-// all of the orders are deleted.
+// all of the "open" orders are deleted.
 
 // `cancelAllOrders` will handle making these requests for you asynchronously.
 // Also, you can add a `product_id` param to only delete orders of that product.
@@ -449,6 +450,12 @@ const withdrawParamsBTC = {
 };
 authedClient.withdraw(withdrawParamsBTC, callback);
 
+// Fetch a deposit address from your Exchange BTC account.
+const depositAddressParams = {
+  currency: 'BTC',
+};
+authedClient.depositCrypto(depositAddressParams, callback);
+
 // Withdraw from your Exchange BTC account to another BTC address.
 const withdrawAddressParams = {
   amount: 10.0,
@@ -456,6 +463,30 @@ const withdrawAddressParams = {
   crypto_address: '15USXR6S4DhSWVHUxXRCuTkD1SA6qAdy',
 };
 authedClient.withdrawCrypto(withdrawAddressParams, callback);
+```
+
+* [`depositPayment`](https://docs.gdax.com/#payment-method)
+
+```js
+// Schedule Deposit to your Exchange USD account from a configured payment method.
+const depositPaymentParamsUSD = {
+  amount: '100.00',
+  currency: 'USD',
+  payment_method_id: 'bc6d7162-d984-5ffa-963c-a493b1c1370b', // ach_bank_account
+};
+authedClient.depositPayment(depositPaymentParamsUSD, callback);
+```
+
+* [`withdrawPayment`](https://docs.gdax.com/#payment-method47)
+
+```js
+// Withdraw from your Exchange USD account to a configured payment method.
+const withdrawPaymentParamsUSD = {
+  amount: '100.00',
+  currency: 'USD',
+  payment_method_id: 'bc6d7162-d984-5ffa-963c-a493b1c1370b', // ach_bank_account
+};
+authedClient.withdrawPayment(withdrawPaymentParamsUSD, callback);
 ```
 
 * [`getTrailingVolume`](https://docs.gdax.com/#user-account)
@@ -499,7 +530,6 @@ const websocket = new Gdax.WebsocketClient(
   },
   { channels: ['full', 'level2'] }
 );
-
 ```
 
 Optionally, [change subscriptions at runtime](https://docs.gdax.com/#subscribe):
@@ -510,20 +540,25 @@ websocket.unsubscribe({ channels: ['full'] });
 websocket.subscribe({ product_ids: ['LTC-USD'], channels: ['ticker', 'user'] });
 
 websocket.subscribe({
-  channels: [{
-    name: 'user',
-    product_ids: ['ETH-USD']
-  }]
+  channels: [
+    {
+      name: 'user',
+      product_ids: ['ETH-USD'],
+    },
+  ],
 });
 
 websocket.unsubscribe({
-  channels: [{
-    name: 'user',
-    product_ids: ['LTC-USD']
-  }, {
-    name: 'user',
-    product_ids: ['ETH-USD']
-  }]
+  channels: [
+    {
+      name: 'user',
+      product_ids: ['LTC-USD'],
+    },
+    {
+      name: 'user',
+      product_ids: ['ETH-USD'],
+    },
+  ],
 });
 ```
 
