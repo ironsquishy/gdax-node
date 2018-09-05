@@ -4,3 +4,7 @@ node_modules
 /.idea
 /yarn.lock
 /.node-version
+
+package-lock.json
+
+.vscode
